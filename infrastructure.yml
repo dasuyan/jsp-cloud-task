@@ -84,6 +84,32 @@ Resources:
           ToPort: 3306
           SourceSecurityGroupId: !Ref WebServerSecurityGroup
 
+  WebServerInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - !Ref WebServerRole
+
+  WebServerRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: EC2DescribeRDSPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - rds:DescribeDBInstances
+                Resource: '*'
+
   WebServerInstance:
     Type: AWS::EC2::Instance
     Properties:
@@ -96,12 +122,13 @@ Resources:
           GroupSet:
             - !Ref WebServerSecurityGroup
           SubnetId: !Ref PublicSubnet1
+      IamInstanceProfile: !Ref WebServerInstanceProfile
       UserData:
         Fn::Base64: !Sub 
           - |
             #!/bin/bash -xe
             dnf update -y
-            dnf install -y httpd php php-mysqlnd aws mariadb105
+            dnf install -y httpd php php-mysqlnd mariadb105
             systemctl start httpd
             systemctl enable httpd
             cd /var/www/html
