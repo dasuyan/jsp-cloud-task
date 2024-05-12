@@ -141,6 +141,12 @@ Resources:
 
             # Copy wp-config-sample.php to wp-config.php
             cp wp-config-sample.php wp-config.php
+            
+            # Install AWS CLI (assuming it's not installed already)
+            yum install -y unzip
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
 
             # Wait for the RDS instance to become available
             while ! aws rds describe-db-instances --db-instance-identifier wordpress-db-instance --query 'DBInstances[0].DBInstanceStatus' --output text | grep -q available; do
