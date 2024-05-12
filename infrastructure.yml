@@ -110,6 +110,7 @@ Resources:
           rm -rf wordpress latest.tar.gz
           chown -R apache:apache /var/www/html
           systemctl restart httpd
+          echo "Done"
 
           # Copy wp-config-sample.php to wp-config.php
           cp wp-config-sample.php wp-config.php
