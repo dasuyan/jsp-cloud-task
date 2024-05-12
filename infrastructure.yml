@@ -98,7 +98,7 @@ Resources:
   DatabaseInstance:
     Type: AWS::RDS::DBInstance
     Properties:
-      DBName: wordpress-db
+      DBName: wordpressdb
       DBInstanceClass: db.t3.micro
       Engine: mysql
       EngineVersion: '8.0.35'
