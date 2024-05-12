@@ -111,23 +111,13 @@ Resources:
           sed -i "s/'database_name_here'/'wordpressdb'/g" wp-config.php
           sed -i "s/'username_here'/'admin'/g" wp-config.php
           sed -i "s/'password_here'/'password'/g" wp-config.php
-          sed -i "s/'localhost'/'$${DB_ENDPOINT}'/g" wp-config.php
+          sed -i "s/'localhost'/'$(Fn::GetAtt DatabaseInstance.Endpoint.Address)'/g" wp-config.php
 
           # Wait for the database to become available
-          until nc -zv $${DB_ENDPOINT} 3306; do
+          until nc -zv $(Fn::GetAtt DatabaseInstance.Endpoint.Address) 3306; do
             echo "Waiting for database to become available..."
             sleep 30
           done
-      Tags:
-        - Key: Name
-          Value: WebServerInstance
-      Metadata:
-        AWS::CloudFormation::Init:
-          config:
-            files:
-              "/etc/environment":
-                content: !Sub |
-                  DB_ENDPOINT=${DatabaseInstance.Endpoint.Address}
 
   DatabaseInstance:
     Type: AWS::RDS::DBInstance
