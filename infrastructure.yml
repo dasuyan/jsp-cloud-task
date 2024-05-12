@@ -127,7 +127,7 @@ Resources:
         Fn::Base64: !Sub 
           - |
             #!/bin/bash -xe
-            
+
             dnf update -y
             dnf install -y httpd php php-mysqlnd mariadb105
             systemctl start httpd
@@ -167,7 +167,7 @@ Resources:
     Type: AWS::RDS::DBInstance
     Properties:
       DBName: wordpressdb
-      DBInstanceIdentifier: wordpress-db-instance
+      DBInstanceIdentifier: wordpress-rds-instance
       DBInstanceClass: db.t3.micro
       Engine: mysql
       EngineVersion: '8.0.35'
