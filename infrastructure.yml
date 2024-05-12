@@ -101,7 +101,7 @@ Resources:
           - |
             #!/bin/bash -xe
             dnf update -y
-            dnf install -y httpd php php-mysqlnd aws
+            dnf install -y httpd php php-mysqlnd aws mariadb105
             systemctl start httpd
             systemctl enable httpd
             cd /var/www/html
