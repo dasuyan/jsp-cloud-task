@@ -127,6 +127,7 @@ Resources:
         Fn::Base64: !Sub 
           - |
             #!/bin/bash -xe
+            
             dnf update -y
             dnf install -y httpd php php-mysqlnd mariadb105
             systemctl start httpd
@@ -141,7 +142,7 @@ Resources:
 
             # Copy wp-config-sample.php to wp-config.php
             cp wp-config-sample.php wp-config.php
-            
+
             # Install AWS CLI (assuming it's not installed already)
             yum install -y unzip
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
