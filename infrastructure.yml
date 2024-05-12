@@ -141,6 +141,8 @@ Resources:
       MasterUsername: admin
       MasterUserPassword: password
       DBSubnetGroupName: !Ref DBSubnetGroup
+      VPCSecurityGroups:
+      - !Ref DatabaseSecurityGroup
 
   DBSubnetGroup:
     Type: AWS::RDS::DBSubnetGroup
