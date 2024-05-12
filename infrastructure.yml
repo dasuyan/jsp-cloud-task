@@ -104,13 +104,30 @@ Resources:
           chown -R apache:apache /var/www/html
           systemctl restart httpd
 
+          # Copy wp-config-sample.php to wp-config.php
+          cp wp-config-sample.php wp-config.php
+
           # Update wp-config.php with RDS database details
-          echo "<?php" > wp-config.php
-          echo "define( 'DB_NAME', '${DatabaseInstance.DBName}' );" >> wp-config.php
-          echo "define( 'DB_USER', '${DatabaseInstance.MasterUsername}' );" >> wp-config.php
-          echo "define( 'DB_PASSWORD', '${DatabaseInstance.MasterUserPassword}' );" >> wp-config.php
-          echo "define( 'DB_HOST', '${DatabaseInstance.Endpoint.Address}' );" >> wp-config.php
-          cat wp-config-sample.php | grep -v "define('DB_" >> wp-config.php
+          sed -i "s/'database_name_here'/'wordpressdb'/g" wp-config.php
+          sed -i "s/'username_here'/'admin'/g" wp-config.php
+          sed -i "s/'password_here'/'password'/g" wp-config.php
+          sed -i "s/'localhost'/'${DB_ENDPOINT}'/g" wp-config.php
+
+          # Wait for the database to become available
+          until nc -zv ${DB_ENDPOINT} 3306; do
+            echo "Waiting for database to become available..."
+            sleep 10
+          done
+      Tags:
+        - Key: Name
+          Value: WebServerInstance
+      Metadata:
+        AWS::CloudFormation::Init:
+          config:
+            files:
+              "/etc/environment":
+                content: !Sub |
+                  DB_ENDPOINT=${DatabaseInstance.Endpoint.Address}
 
   DatabaseInstance:
     Type: AWS::RDS::DBInstance
