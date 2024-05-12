@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Automated deployment of a two-tier AWS infrastructure consisting of a web server (EC2 instance) and a SQL database (RDS) for WordPress. The EC2 key pair name is `jsp-key-pair`, dbname is `wordpress-db`, dbusername is `admin`, and dbpassword is `password`
+Description: Automated deployment of a two-tier AWS infrastructure consisting of a web server (EC2 instance) and a SQL database (RDS) for WordPress.
 
 Resources:
   MyVPC:
