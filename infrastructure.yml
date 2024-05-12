@@ -18,6 +18,11 @@ Resources:
       VpcId: !Ref WordpressVPC
       InternetGatewayId: !Ref InternetGateway
 
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref WordpressVPC
+
   PublicSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
@@ -26,13 +31,18 @@ Resources:
       AvailabilityZone: eu-central-1a
       MapPublicIpOnLaunch: true
 
+  PublicSubnetRouteAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnet1
+
   PrivateSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref WordpressVPC
       CidrBlock: 10.0.1.0/24
       AvailabilityZone: eu-central-1b
-      MapPublicIpOnLaunch: false
 
   PrivateSubnet2:
     Type: AWS::EC2::Subnet
@@ -40,7 +50,6 @@ Resources:
       VpcId: !Ref WordpressVPC
       CidrBlock: 10.0.2.0/24
       AvailabilityZone: eu-central-1c
-      MapPublicIpOnLaunch: false
 
   WebServerSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -94,6 +103,14 @@ Resources:
           rm -rf wordpress latest.tar.gz
           chown -R apache:apache /var/www/html
           systemctl restart httpd
+
+          # Update wp-config.php with RDS database details
+          echo "<?php" > wp-config.php
+          echo "define( 'DB_NAME', '${DatabaseInstance.DBName}' );" >> wp-config.php
+          echo "define( 'DB_USER', '${DatabaseInstance.MasterUsername}' );" >> wp-config.php
+          echo "define( 'DB_PASSWORD', '${DatabaseInstance.MasterUserPassword}' );" >> wp-config.php
+          echo "define( 'DB_HOST', '${DatabaseInstance.Endpoint.Address}' );" >> wp-config.php
+          cat wp-config-sample.php | grep -v "define('DB_" >> wp-config.php
 
   DatabaseInstance:
     Type: AWS::RDS::DBInstance
