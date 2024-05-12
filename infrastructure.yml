@@ -49,14 +49,14 @@ Resources:
     Properties:
       VpcId: !Ref WordpressVPC
       CidrBlock: 10.0.1.0/24
-      AvailabilityZone: eu-central-1a
+      AvailabilityZone: eu-central-1b
 
   PrivateSubnet2:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref WordpressVPC
       CidrBlock: 10.0.2.0/24
-      AvailabilityZone: eu-central-1b
+      AvailabilityZone: eu-central-1c
 
   WebServerSecurityGroup:
     Type: AWS::EC2::SecurityGroup
