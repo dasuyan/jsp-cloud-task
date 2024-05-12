@@ -15,13 +15,13 @@ Resources:
   AttachGateway:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
-      VpcId: !Ref MyVPC
+      VpcId: !Ref WordpressVPC
       InternetGatewayId: !Ref InternetGateway
 
   PublicSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId: !Ref MyVPC
+      VpcId: !Ref WordpressVPC
       CidrBlock: 10.0.0.0/24
       AvailabilityZone: eu-central-1a
       MapPublicIpOnLaunch: true
@@ -29,7 +29,7 @@ Resources:
   PrivateSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId: !Ref MyVPC
+      VpcId: !Ref WordpressVPC
       CidrBlock: 10.0.1.0/24
       AvailabilityZone: eu-central-1b
       MapPublicIpOnLaunch: false
@@ -37,7 +37,7 @@ Resources:
   PrivateSubnet2:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId: !Ref MyVPC
+      VpcId: !Ref WordpressVPC
       CidrBlock: 10.0.2.0/24
       AvailabilityZone: eu-central-1c
       MapPublicIpOnLaunch: false
@@ -46,7 +46,7 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Enable HTTP and SSH access to the web server
-      VpcId: !Ref MyVPC
+      VpcId: !Ref WordpressVPC
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 22
@@ -61,7 +61,7 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Enable MySQL access to the database server
-      VpcId: !Ref MyVPC
+      VpcId: !Ref WordpressVPC
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 3306
