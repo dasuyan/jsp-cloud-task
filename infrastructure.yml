@@ -84,6 +84,16 @@ Resources:
           ToPort: 3306
           SourceSecurityGroupId: !Ref WebServerSecurityGroup
 
+  WaitConditionHandle:
+    Type: AWS::CloudFormation::WaitConditionHandle
+
+  WaitCondition:
+    Type: AWS::CloudFormation::WaitCondition
+    DependsOn: DatabaseInstance
+    Properties:
+      Handle: !Ref WaitConditionHandle
+      Timeout: '600' # Timeout in seconds
+
   WebServerInstance:
     Type: AWS::EC2::Instance
     Properties:
@@ -114,17 +124,15 @@ Resources:
           # Copy wp-config-sample.php to wp-config.php
           cp wp-config-sample.php wp-config.php
 
+          # Wait for the RDS instance to become available
+          /opt/aws/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource WaitConditionHandle --region ${AWS::Region}
+          
           # Update wp-config.php with RDS database details
           sed -i "s/'database_name_here'/'wordpressdb'/g" wp-config.php
           sed -i "s/'username_here'/'admin'/g" wp-config.php
           sed -i "s/'password_here'/'password'/g" wp-config.php
-          sed -i "s/'localhost'/'$(Fn::GetAtt DatabaseInstance.Endpoint.Address)'/g" wp-config.php
-
-          # Wait for the database to become available
-          until nc -zv $(Fn::GetAtt DatabaseInstance.Endpoint.Address) 3306; do
-            echo "Waiting for database to become available..."
-            sleep 30
-          done
+          sed -i "s/'localhost'/'${DB_HOST}'/g" wp-config.php
+        - DB_HOST: !GetAtt DatabaseInstance.Endpoint.Address
 
   DatabaseInstance:
     Type: AWS::RDS::DBInstance
